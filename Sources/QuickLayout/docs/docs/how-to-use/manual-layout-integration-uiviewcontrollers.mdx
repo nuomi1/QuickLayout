@@ -1,0 +1,32 @@
+---
+id: manual-layout-integration-uiviewcontrollers
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# UIViewControllers
+
+Since the macro is not available for view controllers, you need to manually manage the view hierarchy and override `viewDidLayoutSubviews`.
+In the example below, note how `viewDidLayoutSubviews` insets the `view.bounds` by the `safeAreaInsets` and then applies the frame to the body.
+```swift
+final class MyViewController: UIViewController {
+
+  var body: Layout {
+    ...
+  }
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.addSubviews {
+      view1
+      view2
+    }
+  }
+
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    let layoutRect = view.bounds.inset(by: view.safeAreaInsets)
+    body.applyFrame(layoutRect)
+  }
+}
+```

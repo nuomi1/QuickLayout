@@ -1,0 +1,33 @@
+---
+id: macro-layout-integration-bodyContainerView
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# Custom Content View
+
+By default, QuickLayout adds subviews directly within the view itself.
+However, some views may require a different container view for their subviews.
+You can override the `bodyContainerView` property to specify an alternative container view.
+For example, collection view and table view cells use this to ensure views are added to the `contentView`.
+
+```swift
+@QuickLayout
+final class ExperimentedView: UIView {
+
+  let contentView = UIView()
+
+  init() {
+    super.init(frame: .zero)
+    addsSubview(contentView)
+  }
+
+  override public var bodyContainerView: UIView {
+    contentView /// This will be the container view for the body.
+  }
+
+  var body: Layout {
+    ...
+  }
+}
+```

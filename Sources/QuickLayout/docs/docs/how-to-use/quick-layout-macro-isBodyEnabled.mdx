@@ -1,0 +1,53 @@
+---
+id: macro-layout-integration-isBodyEnabled
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+
+# Experimentation
+
+To help you experiment with QuickLayout, the macro provides a way to disable QuickLayout on a specific view.
+This is achieved by overriding the `isBodyEnabled` property.
+
+```swift
+@QuickLayout
+final class ExperimentedView: UIView {
+
+  override var isBodyEnabled: Bool {
+    featureFlags.isQuickLayoutEnabled
+  }
+
+  init() {
+    super.init(frame: .zero)
+    if !isBodyEnabled {
+      self.addSubviews {
+        label
+        image
+      }
+    }
+  }
+
+  var body: Layout {
+    ...
+  }
+
+  override public func layoutSubviews() {
+    super.layoutSubviews()
+    /// Note: you don't need to call
+    /// _QuickLayoutViewImplementation.layoutSubviews(self)
+    /// because it's automatically injected by the macro.
+    if !isBodyEnabled {
+      imperativeManualLayoutSubviews()
+    }
+  }
+
+  override public func sizeThatFits(_ size: CGSize) -> CGSize {
+    if !isBodyEnabled {
+      imperativeManualSizeThatFits(size)
+    }
+    /// OK to call for migration.
+    _QuickLayoutViewImplementation.sizeThatFits(self, size: size) ?? .zero
+  }
+}
+```

@@ -25,11 +25,17 @@ module.exports = {
     'code-samples',
     ,
     {
-      'How To Use': [
+      '@QuickLayout Macro': [
         'how-to-use/macro-layout-integration',
-        'how-to-use/manual-layout-integration',
+        'how-to-use/macro-layout-integration-state-updates',
+        'how-to-use/macro-layout-integration-bodyContainerView',
+        'how-to-use/macro-layout-integration-isBodyEnabled',
+        'how-to-use/macro-layout-integration-dos',
+        'how-to-use/macro-layout-integration-donts',
       ]
     },
+    'how-to-use/manual-layout-integration',
+    'how-to-use/manual-layout-integration-uiviewcontrollers',
     {
       'Containers': [
         'layout/hstack',

@@ -4,9 +4,10 @@ id: manual-layout-integration
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-# Manual Layout Integration
+# Manual Integration
 
-The @QuickLayout macro is available for all view instances, but not view controllers. When needed, you can still use QuickLayout without this macro. In that case, you will need to manually manage the view hierarchy and override the `layoutSubviews` and `sizeThatFits` methods. The snippet below demonstrates a view that does not utilize the @QuickLayout macro, but still utilizes a declarative syntax for layout.
+When needed, you can still use QuickLayout without the macro by manually managing the view hierarchy and overriding the `layoutSubviews` and `sizeThatFits` methods.
+
 ```swift
 import QuickLayout
 

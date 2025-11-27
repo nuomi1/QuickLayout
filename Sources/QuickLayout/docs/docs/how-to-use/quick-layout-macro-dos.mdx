@@ -1,0 +1,50 @@
+---
+id: macro-layout-integration-dos
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# Tips
+
+:::tip It's OK to override layoutSubviews
+
+This is a great way to add custom layout logic to your view.
+```swift
+@QuickLayout
+final class ViewWithAdditionalLayoutBehaviour: UIView {
+
+  let label = UILabel()
+
+  var body: Layout {
+    ...
+  }
+
+  /// Feel free to override layoutSubviews to customize your layout.
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    label.frame = ....
+  }
+}
+```
+:::
+
+:::tip It's OK to override sizeThatFits
+
+```swift
+@QuickLayout
+final class ViewWithFixedSize: UIView {
+
+  var body: Layout {
+    ...
+  }
+
+  /// 👍 It's OK to override sizeThatFits
+  override func sizeThatFits(_ size: CGSize) -> CGSize {
+    /// Note you can achieve the same result
+    /// by using the `.frame(height: 100)` modifier in the body.
+    CGSize(width: size.widith, height: 100)
+  }
+}
+```
+
+:::

@@ -1,0 +1,57 @@
+---
+id: macro-layout-integration-donts
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# Traps
+
+:::danger Don't use @QuickLayout macro on UIViewControllers
+[See this page for integration with UIViewControllers](manual-layout-integration-uiviewcontrollers.mdx).
+```swift
+@QuickLayout /// <-- 🛑 Don't use the macro on UIViewControllers
+final class MyViewController: UIViewController {
+
+  var body: Layout {
+    ...
+  }
+}
+```
+:::
+
+:::danger DON'T
+When using @QuickLayout, don't call `body.applyFrame()`.
+This will result in double measurements.
+
+
+```swift
+@QuickLayout
+final class VerySlowView: UIView {
+
+  var body: Layout {
+    ...
+  }
+
+  /// @QuickLayout macro will insert additional
+  /// _QuickLayoutViewImplementation call into this method.
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    body.applyFrame(self.bounds) /// <-- 🛑 Don't call applyFrame when using @QuickLayout macro
+  }
+}
+```
+:::
+
+:::danger Don't create views in the body
+```swift
+@QuickLayout
+final class MyView: UIView {
+
+  var body: Layout {
+    HStack {
+      UIView() /// <-- 🛑 Don't create views in the body
+    }
+  }
+}
+```
+:::

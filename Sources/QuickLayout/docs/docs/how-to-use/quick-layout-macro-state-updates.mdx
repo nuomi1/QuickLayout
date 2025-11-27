@@ -1,0 +1,66 @@
+---
+id: macro-layout-integration-state-updates
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# State Updates
+
+When the state of a view changes, call `setNeedsLayout` to trigger a layout update. This applies whether you're using the `@QuickLayout` macro or manual integration.
+
+With the `@QuickLayout` macro, calling `setNeedsLayout` will:
+- Update the view hierarchy based on the current state
+- Animate any views that are added or removed
+- Re-layout all subviews
+
+The example below demonstrates a stateful view that lazily creates a `label` when the user presses the `increaseButton` for the first time, and updates the layout accordingly.
+
+```swift
+@QuickLayout
+final class CounterView: UIView {
+
+  private var count = 0
+
+  private lazy var label {
+    // This view will only be created when the count is set to 1 for the first time.
+    UILabel()
+  }
+
+  private lazy var increaseButton = {
+    let button = UIButton(type: .system)
+    button.setTitle("Increase", for: .normal)
+    button.addTarget(self, action: #selector(addCount), for: .touchUpInside)
+    return button
+  }()
+
+  private lazy var resetButton = {
+    let button = UIButton(type: .system)
+    button.setTitle("Reset", for: .normal)
+    button.addTarget(self, action: #selector(resetCount), for: .touchUpInside)
+    return button
+  }()
+
+  var body: Layout {
+    VStack(spacing: 8) {
+      if count > 0 {
+        label
+      }
+      HStack(spacing: 8) {
+        increaseButton
+        resetButton
+      }
+    }
+  }
+
+  @objc private func addCount() {
+    count += 1
+    label.text = "Count: \(count)"
+    setNeedsLayout() // <-- This is the key line.
+  }
+
+  @objc private func resetCount() {
+    count = 0
+    setNeedsLayout() // <-- This is the key line.
+  }
+}
+```

@@ -4,11 +4,13 @@ id: macro-layout-integration
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-# Quick Layout Macro
+# How It Works
 
-QuickLayout supports fast, automatic layout management for UIKit views. This is achieved by prepending `@QuickLayout` to your view's declaration.
-`@QuickLayout` supports a number of features, including automatic layout, subview management, and sizing. It is the recommended
-way of integrating QuickLayout, although manual integration is still available when needed.
+QuickLayout supports fast, automatic layout management for UIKit views.
+This is achieved by prepending `@QuickLayout` to your view's declaration.
+`@QuickLayout` supports a number of features, including automatic layout, subview management, and sizing.
+It is the recommended way of integrating QuickLayout for UIViews.
+However, the macro doesn't work with UIViewControllers, for integration with view controllers [see this page](manual-layout-integration-uiviewcontrollers.mdx).
 
 <FbInternalOnly>
 
@@ -53,70 +55,30 @@ final class MyView: UIView {
 }
 ```
 
-:::tip Note
-Views that utilize @QuickLayout will automatically manage their view hierarchy. Therefore, there is no need to call addSubviews/removeFromSuperview manually.
-:::
-
-### Stateful View
-When the state of a view changes, call `setNeedsLayout`. This will prompt the view to update its hierarchy, animate any added or removed views, and re-layout all subviews. The snippet below demonstrates an example of a stateful view. It lazily creates the `label` view when the user presses the `increaseButton` for the first time and updates the layout accordingly.
+The `@QuickLayout` macro adds `layoutSubviews` and `sizeThatFits` methods to your view. After macro expansion, the view will look like this:
 
 ```swift
-@QuickLayout
-final class CounterView: UIView {
+final class MyView: UIView {
 
-  private var count = 0
-
-  private lazy var label {
-    // This view will only be created when the count is set to 1 for the first time.
-    UILabel()
-  }
-
-  private lazy var increaseButton = {
-    let button = UIButton(type: .system)
-    button.setTitle("Increase", for: .normal)
-    button.addTarget(self, action: #selector(addCount), for: .touchUpInside)
-    return button
-  }()
-
-  private lazy var resetButton = {
-    let button = UIButton(type: .system)
-    button.setTitle("Reset", for: .normal)
-    button.addTarget(self, action: #selector(resetCount), for: .touchUpInside)
-    return button
-  }()
+  ...
 
   var body: Layout {
-    VStack(spacing: 8) {
-      if count > 0 {
-        label
-      }
-      HStack(spacing: 8) {
-        increaseButton
-        resetButton
-      }
-    }
+    ...
   }
 
-  @objc private func addCount() {
-    count += 1
-    label.text = "Count: \(count)"
-    setNeedsLayout()
+  // -------- START OF MACRO EXPANSION ---------
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    _QuickLayoutViewImplementation.layoutSubviews(self)
   }
 
-  @objc private func resetCount() {
-    count = 0
-    setNeedsLayout()
+  override func sizeThatFits(_ size: CGSize) -> CGSize {
+    _QuickLayoutViewImplementation.sizeThatFits(self, size: size) ?? .zero
   }
+  // -------- END OF MACRO EXPANSION -----------
 }
 ```
 
-### Advanced @QuickLayout Usage
-It is possible to continue overriding `layoutSubviews` and even `sizeThatFits` while utilizing the @QuickLayout macro. When doing so:
-
-- `layoutSubviews` will perform `body` layout directly after `super.layoutSubviews()` is called.
-- `sizeThatFits` will override the default body sizing, allowing you to return something fully custom.
-
-Additionally, the following methods are available to override:
-
-- `isBodyEnabled`: this allows you to toggle automatic layout management. It's a great way to test a migration to QuickLayout in-place.
-- `bodyContainerView`: this changes the view that subviews are managed within. Collection view and table view cells utilize this to ensure views are placed on `contentView`.
+**Note:**
+- If you provide a custom implementation for `layoutSubviews`, the `@QuickLayout` macro will inject the QuickLayout implementation into your method.
+- However, if you provide a custom implementation for `sizeThatFits`, the `@QuickLayout` macro will not modify it.
