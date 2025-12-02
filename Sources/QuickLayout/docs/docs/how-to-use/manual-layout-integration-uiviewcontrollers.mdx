@@ -30,3 +30,35 @@ final class MyViewController: UIViewController {
   }
 }
 ```
+
+## @QuickLayout view in a view controller
+
+```swift
+@QuickLayout
+class MyView: UIView {
+  var body: Layout {
+    ...
+  }
+}
+
+class ViewController: UIViewController {
+
+  let myView = MyView()
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.addSubview(myView)
+  }
+
+  var body: Layout {
+    ZStack {
+      myView
+    }
+  }
+
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    body.applyFrame(view.bounds.inset(by: view.safeAreaInsets))
+  }
+}
+```
