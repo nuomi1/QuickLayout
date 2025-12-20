@@ -105,14 +105,14 @@ struct ShowcaseApp: View {
 
 private struct ShowcaseViewRepresentable: UIViewRepresentable {
 
-  let view: UIView.Type
+  let viewType: UIView.Type
 
   init(_ viewType: UIView.Type) {
-    self.view = viewType
+    self.viewType = viewType
   }
 
   func makeUIView(context: Context) -> some UIView {
-    view.init() as UIView
+    viewType.init() as UIView
   }
 
   func updateUIView(_ uiView: UIViewType, context: Context) {
